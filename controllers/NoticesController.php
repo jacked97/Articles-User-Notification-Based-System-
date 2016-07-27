@@ -13,20 +13,9 @@ use yii\filters\VerbFilter;
  * NoticesController implements the CRUD actions for Notices model.
  */
 class NoticesController extends Controller {
-
     /**
      * @inheritdoc
      */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     /**
      * Lists all Notices models.
@@ -161,6 +150,44 @@ class NoticesController extends Controller {
 
     private function markNoticeRead($id) {
         \app\models\database\NoticeReadBy::updateAll(['status' => 1], ['id' => $id]);
+    }
+
+    public function behaviors() {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => \app\components\AccessRule::className(),
+                ],
+                'only' => ['index', 'create', 'update', 'delete', 'my'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        // Allow users, moderators and admins to create
+                        'roles' => [
+                            \app\models\User::$ADMIN
+                        ],
+                    ],
+                    [
+                        'actions' => ['my'],
+                        'allow' => true,
+                        // Allow users, moderators and admins to create
+                        'roles' => [
+                            \app\models\User::$ADMIN,
+                            \app\models\User::$USER
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
 }

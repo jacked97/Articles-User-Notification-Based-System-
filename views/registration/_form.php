@@ -18,11 +18,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
+    <?= $form->field($model, 'status')->dropDownList(['1' => 'Enable', '0' => 'Disbale']) ?>
 
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?=
+    $form->field($model, 'type')->dropDownList([
+        app\models\User::$ADMIN => app\models\User::$ADMIN,
+        app\models\User::$USER => app\models\User::$USER
+    ])
+    ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

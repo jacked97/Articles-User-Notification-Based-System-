@@ -10,10 +10,11 @@ use Yii;
  * @property integer $id
  * @property string $username
  * @property string $password
- * @property integer $status
  * @property string $full_name
  * @property string $created_at
  * @property string $updated_at
+ * @property integer $status
+ * @property string $type
  *
  * @property Articles[] $articles
  * @property NoticeReadBy[] $noticeReadBies
@@ -35,10 +36,10 @@ class Registrations extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'password', 'status'], 'required'],
-            [['status'], 'integer'],
+            [['username', 'password'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
-            [['username', 'password', 'full_name'], 'string', 'max' => 255],
+            [['status'], 'integer'],
+            [['username', 'password', 'full_name', 'type'], 'string', 'max' => 255],
         ];
     }
 
@@ -51,10 +52,11 @@ class Registrations extends \yii\db\ActiveRecord
             'id' => 'ID',
             'username' => 'Username',
             'password' => 'Password',
-            'status' => 'Status',
             'full_name' => 'Full Name',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'status' => 'Status',
+            'type' => 'Type',
         ];
     }
 

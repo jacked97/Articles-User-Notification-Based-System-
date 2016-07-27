@@ -13,6 +13,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
     public $accessToken;
     public $full_name;
     public $created_at, $updated_at, $status, $type;
+    public static $ADMIN = 'admin', $USER = 'user';
 
     /**
      * @inheritdoc
@@ -89,6 +90,20 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
      */
     public function validatePassword($password) {
         return $this->password === $password;
+    }
+
+    public function isAdmin() {
+        if ($this->type == self::$ADMIN)
+            return true;
+        else
+            return false;
+    }
+
+    public function isUser() {
+        if ($this->type == self::$USER)
+            return true;
+        else
+            return false;
     }
 
 }

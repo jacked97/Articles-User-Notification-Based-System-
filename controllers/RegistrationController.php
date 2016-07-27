@@ -12,35 +12,22 @@ use yii\filters\VerbFilter;
 /**
  * RegistrationController implements the CRUD actions for Registrations model.
  */
-class RegistrationController extends Controller
-{
+class RegistrationController extends Controller {
     /**
      * @inheritdoc
      */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     /**
      * Lists all Registrations models.
      * @return mixed
      */
-    public function actionIndex()
-    {
+    public function actionIndex() {
         $searchModel = new RegistrationsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
         ]);
     }
 
@@ -49,10 +36,9 @@ class RegistrationController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionView($id)
-    {
+    public function actionView($id) {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+                    'model' => $this->findModel($id),
         ]);
     }
 
@@ -61,15 +47,20 @@ class RegistrationController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
-    {
+    public function actionCreate() {
         $model = new Registrations();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $model->created_at = date("Y-m-d H:i:s");;
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else
+                return $this->render('create', [
+                            'model' => $model,
+                ]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -80,15 +71,14 @@ class RegistrationController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
-    {
+    public function actionUpdate($id) {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
-                'model' => $model,
+                        'model' => $model,
             ]);
         }
     }
@@ -99,8 +89,7 @@ class RegistrationController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
-    {
+    public function actionDelete($id) {
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -113,12 +102,41 @@ class RegistrationController extends Controller
      * @return Registrations the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
-    {
+    protected function findModel($id) {
         if (($model = Registrations::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function behaviors() {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => \app\components\AccessRule::className(),
+                ],
+                'only' => ['index', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create', 'update', 'delete'],
+                        'allow' => true,
+                        // Allow users, moderators and admins to create
+                        'roles' => [
+                            \app\models\User::$ADMIN
+                        ],
+                    ]
+                ],
+            ],
+        ];
+    }
+
 }

@@ -35,12 +35,12 @@ AppAsset::register($this);
             $unreadNoticeCount = \app\models\database\NoticeReadBy::find()
                     ->where(['author_id' => Yii::$app->user->id, 'status' => '0'])
                     ->count();
+            
+
             echo Nav::widget([
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => [
                     ['label' => 'Home', 'url' => ['/site/index']],
-                    ['label' => 'About', 'url' => ['/site/about']],
-                    ['label' => 'Contact', 'url' => ['/site/contact']],
                     ['label' => 'Articles', 'url' => ['/articles/index']],
                     ['label' => 'Registered Users', 'url' => ['/registration/index']],
                     ['label' => 'Notice Panel', 'url' => ['/notices/index']]

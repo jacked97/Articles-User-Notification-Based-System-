@@ -13,20 +13,9 @@ use yii\filters\VerbFilter;
  * ArticlesController implements the CRUD actions for Articles model.
  */
 class ArticlesController extends Controller {
-
     /**
      * @inheritdoc
      */
-    public function behaviors() {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
 
     /**
      * Lists all Articles models.
@@ -34,6 +23,8 @@ class ArticlesController extends Controller {
      */
     public function actionIndex() {
         $searchModel = new ArticlesSearch();
+        if (Yii::$app->user->identity->isUser())
+            $searchModel->author_id = Yii::$app->user->id;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -120,6 +111,52 @@ class ArticlesController extends Controller {
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function behaviors() {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                // We will override the default rule config with the new AccessRule class
+                'ruleConfig' => [
+                    'class' => \app\components\AccessRule::className(),
+                ],
+                'only' => ['index', 'create', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'create'],
+                        'allow' => true,
+                        // Allow users, moderators and admins to create
+                        'roles' => [
+                            \app\models\User::$ADMIN,
+                            \app\models\User::$USER
+                        ],
+                    ],
+                    [
+                        'actions' => ['update'],
+                        'allow' => true,
+                        // Allow moderators and admins to update
+                        'roles' => [
+                            \app\models\User::$ADMIN
+                        ],
+                    ],
+                    [
+                        'actions' => ['delete'],
+                        'allow' => true,
+                        // Allow admins to delete
+                        'roles' => [
+                            \app\models\User::$ADMIN
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
 }
