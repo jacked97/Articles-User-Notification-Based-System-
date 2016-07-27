@@ -20,21 +20,19 @@ use Yii;
  * @property NoticeReadBy[] $noticeReadBies
  * @property Notices[] $notices
  */
-class Registrations extends \yii\db\ActiveRecord
-{
+class Registrations extends \yii\db\ActiveRecord {
+
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'registrations';
     }
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             [['username', 'password'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
@@ -46,8 +44,7 @@ class Registrations extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'id' => 'ID',
             'username' => 'Username',
@@ -63,24 +60,32 @@ class Registrations extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getArticles()
-    {
+    public function getArticles() {
         return $this->hasMany(Articles::className(), ['author_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getNoticeReadBies()
-    {
+    public function getNoticeReadBies() {
         return $this->hasMany(NoticeReadBy::className(), ['author_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getNotices()
-    {
+    public function getNotices() {
         return $this->hasMany(Notices::className(), ['author_id' => 'id']);
     }
+
+    public function afterSave($insert, $changedAttributes) {
+        if (!$insert) {
+            if (in_array('status', array_keys($changedAttributes))) {
+                $notficeTypes = array(\app\types\NoticeTypes::$EMAIL);
+                $users = array($this->id);
+                \app\components\NoticeComponents::notifyUsers('', '', '', $notficeTypes, $users, '', null, \app\types\NoticeEmailTemplateTypes::$USER_SET_INACTIVE);
+            }
+        }
+    }
+
 }

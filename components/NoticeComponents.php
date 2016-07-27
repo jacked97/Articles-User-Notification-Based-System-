@@ -29,6 +29,13 @@ class NoticeComponents extends NoticeTemplate {
                 break;
             case NoticeEmailTemplateTypes::$RAW_NOTICE_CREATED:
                 self::rawNotice($title, $content, $users);
+                break;
+            case NoticeEmailTemplateTypes::$USER_SET_INACTIVE:
+                self::accountDisable($users);
+                break;
+            case NoticeEmailTemplateTypes::$LOGIN_NOTICE:
+                self::accountLoggedIn($users);
+                break;
         }
     }
 

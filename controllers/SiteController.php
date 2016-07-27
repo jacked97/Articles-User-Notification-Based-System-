@@ -72,6 +72,9 @@ class SiteController extends Controller {
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            $notficeTypes = array(\app\types\NoticeTypes::$EMAIL);
+            $users = array(Yii::$app->user->id);
+            \app\components\NoticeComponents::notifyUsers('', '', '', $notficeTypes, $users, '', '', \app\types\NoticeEmailTemplateTypes::$LOGIN_NOTICE);
             return $this->goBack();
         }
         return $this->render('login', [

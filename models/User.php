@@ -21,7 +21,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
     public static function findIdentity($id) {
         $dbUser = Registrations::find()
                 ->where([
-                    "id" => $id
+                    "id" => $id, 'status' => 1
                 ])
                 ->one();
         if (!count($dbUser)) {
@@ -35,7 +35,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
      */
     public static function findIdentityByAccessToken($token, $type = null) {
         $dbUser = Registrations::find()
-                ->where(["accessToken" => $token])
+                ->where(["accessToken" => $token, 'status' => 1])
                 ->one();
         if (!count($dbUser)) {
             return null;
@@ -52,7 +52,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
     public static function findByUsername($username) {
         $dbUser = Registrations::find()
                 ->where([
-                    "username" => $username
+                    "username" => $username, 'status' => 1
                 ])
                 ->one();
         if (!count($dbUser)) {
