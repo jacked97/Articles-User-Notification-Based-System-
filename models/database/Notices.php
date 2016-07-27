@@ -71,7 +71,7 @@ class Notices extends \yii\db\ActiveRecord {
             $users = array();
             foreach (Registrations::find()->where('id != ' . Yii::$app->user->id)->all() as $user)
                 array_push($users, $user->id);
-            \app\components\NoticeComponents::notifyUsers($this->title, $this->text, '', $noticeType, $users, Yii::$app->user->id, $this->id);
+            \app\components\NoticeComponents::notifyUsers($this->title, $this->text, '', $noticeType, $users, Yii::$app->user->id, $this->id, \app\types\NoticeEmailTemplateTypes::$RAW_NOTICE_CREATED);
         }
         //exit;
     }

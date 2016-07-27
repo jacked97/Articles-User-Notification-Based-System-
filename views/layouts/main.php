@@ -41,7 +41,9 @@ AppAsset::register($this);
                     ['label' => 'Home', 'url' => ['/site/index']],
                     ['label' => 'About', 'url' => ['/site/about']],
                     ['label' => 'Contact', 'url' => ['/site/contact']],
-                    ['label' => 'Articles', 'url' => ['/articles/index']]
+                    ['label' => 'Articles', 'url' => ['/articles/index']],
+                    ['label' => 'Registered Users', 'url' => ['/registration/index']],
+                    ['label' => 'Notice Panel', 'url' => ['/notices/index']]
                     , ('<li><a href="' . yii\helpers\Url::to(['notices/my']) . '">Notice <span class="badge">' . $unreadNoticeCount . '</span></a></li>'),
                     Yii::$app->user->isGuest ? (
                             ['label' => 'Login', 'url' => ['/site/login']]

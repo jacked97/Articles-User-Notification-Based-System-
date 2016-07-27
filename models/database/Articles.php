@@ -71,7 +71,7 @@ class Articles extends \yii\db\ActiveRecord {
                 if ($user->id != Yii::$app->user->id)
                     array_push($users, $user->id);
             }
-            \app\components\NoticeComponents::notifyUsers($title, $shortDescription, $readMoreLink, $noticeType, $users, Yii::$app->user->id, \app\types\NoticeEmailTemplateTypes::$NEW_ARTICLE);
+            \app\components\NoticeComponents::notifyUsers($title, $shortDescription, $readMoreLink, $noticeType, $users, Yii::$app->user->id, null, \app\types\NoticeEmailTemplateTypes::$NEW_ARTICLE);
         }
         //exit;
     }

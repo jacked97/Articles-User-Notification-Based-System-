@@ -19,7 +19,7 @@ class Registrations extends RegistrationsModel
     {
         return [
             [['id', 'status'], 'integer'],
-            [['username', 'password', 'full_name', 'created_at', 'updated_at'], 'safe'],
+            [['username', 'password', 'full_name', 'created_at', 'updated_at', 'type'], 'safe'],
         ];
     }
 
@@ -60,14 +60,15 @@ class Registrations extends RegistrationsModel
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'status' => $this->status,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])
             ->andFilterWhere(['like', 'password', $this->password])
-            ->andFilterWhere(['like', 'full_name', $this->full_name]);
+            ->andFilterWhere(['like', 'full_name', $this->full_name])
+            ->andFilterWhere(['like', 'type', $this->type]);
 
         return $dataProvider;
     }

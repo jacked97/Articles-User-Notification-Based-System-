@@ -12,7 +12,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
     public $authKey;
     public $accessToken;
     public $full_name;
-    public $created_at, $updated_at, $status;
+    public $created_at, $updated_at, $status, $type;
 
     /**
      * @inheritdoc

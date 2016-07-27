@@ -8,9 +8,8 @@ use app\types\NoticeEmailTemplateTypes;
 class NoticeComponents extends NoticeTemplate {
 
     public static function notifyUsers($title, $content, $readMoreLink, $notficeTypes, $users, $createdBy, $noticeId = null, $emailTemplateType = null) {
-
         if (in_array('Email', $notficeTypes)) {
-            self::email($title, $content, $readMoreLink, $users, $notficeTypes, $createdBy, $noticeId);
+            self::email($title, $content, $readMoreLink, $users, $notficeTypes, $createdBy, $noticeId, $emailTemplateType);
         }
         if (in_array('Browser', $notficeTypes)) {
             self::browser($title, $content, $users, $notficeTypes, $createdBy, $noticeId);
@@ -27,6 +26,9 @@ class NoticeComponents extends NoticeTemplate {
         switch ($emailTemplateType) {
             case NoticeEmailTemplateTypes::$NEW_ARTICLE:
                 self::notifyArticle($title, $content, $readMoreLink, $users, $createdBy);
+                break;
+            case NoticeEmailTemplateTypes::$RAW_NOTICE_CREATED:
+                self::rawNotice($title, $content, $users);
         }
     }
 
@@ -38,6 +40,7 @@ class NoticeComponents extends NoticeTemplate {
             $storeNotice->created_at = date("Y-m-d H:i:s");
             $storeNotice->title = $title;
             $storeNotice->text = $content;
+            $storeNotice->notice_type = self::getNoticeIdsString($notficeTypes);
             $storeNotice->afterSaveEnable = false;
             if ($storeNotice->save()) {
                 foreach ($users as $user) {
@@ -77,7 +80,20 @@ class NoticeComponents extends NoticeTemplate {
     }
 
     private static function getNoticeIdsString($arr) {
-        
+        $where = '';
+        $firstIteration = true;
+        $ids = array();
+        foreach ($arr as $type) {
+            if ($firstIteration) {
+                $firstIteration = false;
+                $where .= "type = '$type'";
+            }
+            $where .= " OR type = '$type'";
+        }
+        $noticceIds = \app\models\database\NoticeTypes::find()->where($where)->all();
+        foreach ($noticceIds as $id)
+            array_push($ids, $id->id);
+        return $ids;
     }
 
 }
